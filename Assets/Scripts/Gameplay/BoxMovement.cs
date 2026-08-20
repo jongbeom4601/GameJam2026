@@ -11,9 +11,14 @@ public class BoxMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D col;
     private SpriteRenderer boxSprite;
+    private Sprite originalSprite;
+    private int originalSortingOrder;
+    private Vector3 originalSpriteLocalPosition;
     private SpriteRenderer outline;
     private LineRenderer directionArrow;
     private bool isStopped;
+    private bool isUsingStoppedSprite;
+    private Vector2 stoppedPosition;
 
     public bool CanInteract => !isStopped && col != null && col.enabled;
 
@@ -21,8 +26,19 @@ public class BoxMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
-        boxSprite = GetComponent<SpriteRenderer>();
+        // [수정] 이미지가 Box의 하위 오브젝트로 이동해도 찾을 수 있게 함
+        boxSprite = GetComponentInChildren<SpriteRenderer>(true);
+        if (boxSprite != null)
+        {
+            originalSprite = boxSprite.sprite;
+            originalSpriteLocalPosition = boxSprite.transform.localPosition;
+        }
         CreateInteractionVisuals();
+        if (boxSprite != null)
+        {
+            // 테두리 생성 후 실제 플레이 중인 Box의 Order 저장
+            originalSortingOrder = boxSprite.sortingOrder;
+        }
     }
 
     private void CreateInteractionVisuals()
@@ -30,7 +46,8 @@ public class BoxMovement : MonoBehaviour
         if (boxSprite != null)
         {
             GameObject outlineObject = new GameObject("Interaction Outline");
-            outlineObject.transform.SetParent(transform, false);
+            // 실제 Box 이미지의 위치와 Sorting 설정을 그대로 따라감
+            outlineObject.transform.SetParent(boxSprite.transform, false);
             outlineObject.transform.localScale = Vector3.one * 1.1f;
             outline = outlineObject.AddComponent<SpriteRenderer>();
             outline.sprite = boxSprite.sprite;
@@ -62,10 +79,28 @@ public class BoxMovement : MonoBehaviour
         directionArrow.enabled = false;
     }
 
+    private void Update()
+    {
+        // [수정] 되감기로 Stopper 위치에서 벗어나는 즉시 원래 이미지 복원
+        if (isStopped && isUsingStoppedSprite &&
+            Vector2.Distance(transform.position, stoppedPosition) > 0.1f)
+        {
+            boxSprite.sprite = originalSprite;
+            boxSprite.sortingOrder = originalSortingOrder;
+            boxSprite.transform.localPosition = originalSpriteLocalPosition;
+            isUsingStoppedSprite = false;
+        }
+    }
+
     public void SetInteractionPreview(bool visible, Vector2 playerPosition, Vector2 lastMoveDirection)
     {
         if (outline != null)
+        {
+            outline.sprite = boxSprite.sprite;
+            outline.sortingLayerID = boxSprite.sortingLayerID;
+            outline.sortingOrder = boxSprite.sortingOrder - 1;
             outline.enabled = visible;
+        }
 
         if (directionArrow == null)
             return;
@@ -73,6 +108,9 @@ public class BoxMovement : MonoBehaviour
         directionArrow.enabled = visible;
         if (!visible)
             return;
+
+        directionArrow.sortingLayerID = boxSprite != null ? boxSprite.sortingLayerID : 0;
+        directionArrow.sortingOrder = boxSprite != null ? boxSprite.sortingOrder + 1 : 2;
 
         Vector2 direction = GetPushDirection(playerPosition, lastMoveDirection);
         directionArrow.transform.localRotation = Quaternion.Euler(0f, 0f, DirectionAngle(direction));
@@ -149,11 +187,27 @@ public class BoxMovement : MonoBehaviour
         return true;
     }
 
-    public void StopOnStopper()
+    public void StopOnStopper(Sprite stoppedSprite, Vector2 stopperPosition)
     {
         isStopped = true;
+        stoppedPosition = stopperPosition;
         rb.linearVelocity = Vector2.zero;
         SetInteractionPreview(false, Vector2.zero, Vector2.down);
+
+        // [수정] BoxStopper에 지정된 완료 이미지로 교체
+        if (boxSprite != null && stoppedSprite != null)
+        {
+            boxSprite.sprite = stoppedSprite;
+        }
+
+        if (boxSprite != null)
+        {
+            // [수정] BoxStopper 위에서는 완료 이미지의 Order를 0으로 고정
+            boxSprite.sortingOrder = 0;
+            boxSprite.transform.localPosition =
+                originalSpriteLocalPosition + new Vector3(0f, -0.2f, 0f);
+            isUsingStoppedSprite = true;
+        }
 
         // [수정] Stopper에 도착한 뒤 Box와의 충돌도 해제
         col.enabled = false;
@@ -163,5 +217,13 @@ public class BoxMovement : MonoBehaviour
     {
         isStopped = false;
         col.enabled = true;
+
+        if (boxSprite != null)
+        {
+            boxSprite.sprite = originalSprite;
+            boxSprite.sortingOrder = originalSortingOrder;
+            boxSprite.transform.localPosition = originalSpriteLocalPosition;
+        }
+        isUsingStoppedSprite = false;
     }
 }

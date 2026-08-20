@@ -87,7 +87,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2311957235273970707, guid: 9ed5e594986eb8f4fb921a89f5860a97, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -264,7 +264,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4c62d1dd98e4f7f9f955443a0e37f21, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerFootstepVfx
   firstEffectFrames:
   - {fileID: 1851000101, guid: 37f23ffed65f454489d0b878983dad61, type: 3}
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe6f5b9a38354666bb248c3d5f2d26b0, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTimeGaugeUI
   gaugeFrame: {fileID: 1852000101, guid: 6834e2c561714cd8b3c2fd48629972c5, type: 3}
   lavaTexture: {fileID: 2800000, guid: 071acb21b09e401cb4b44be952b9a75e, type: 3}
@@ -321,7 +321,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fd8b1f963b447899cead1602c2a61f4, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerRewindVfx
   preparationTexture: {fileID: 2800000, guid: fa17e8b2560b4c36aa6c3f64b31a865d, type: 3}
   preparationFrameCount: 29

@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 519b00310c9084345b2058e9d0c959ac
+guid: 7bb20fee5a813af4297ca0f5cfa9a6a0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3668565460176114443
-    second: "\uB9F52_0"
+      213: -4241358050151407370
+    second: "\uB3CC\uB9F9\uC7741 (1)_0"
+  - first:
+      213: -6695490222255526287
+    second: "\uB3CC\uB9F9\uC7741 (1)_1"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +40,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,9 +54,9 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 32
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 0
+  spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -75,7 +78,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +103,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uB9F52_0"
+      name: "\uB3CC\uB9F9\uC7741 (1)_0"
       rect:
         serializedVersion: 2
-        x: 22
-        y: 25
-        width: 82
-        height: 79
+        x: 0
+        y: 6
+        width: 14
+        height: 26
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +118,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b03901169dc59e230800000000000000
-      internalID: 3668565460176114443
+      spriteID: 6f06b77335ba325c0800000000000000
+      internalID: -4241358050151407370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\uB3CC\uB9F9\uC7741 (1)_1"
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17eab59fd17d413a0800000000000000
+      internalID: -6695490222255526287
       vertices: []
       indices: 
       edges: []
@@ -135,7 +160,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uB9F52_0": 3668565460176114443
+      "\uB3CC\uB9F9\uC7741 (1)_0": -4241358050151407370
+      "\uB3CC\uB9F9\uC7741 (1)_1": -6695490222255526287
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

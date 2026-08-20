@@ -4,6 +4,8 @@ using UnityEngine;
 public class Box : MonoBehaviour
 {
     [SerializeField] private float positionTolerance = 0.1f;
+    [Header("Box 도착 이미지")]
+    [SerializeField] private Sprite stoppedBoxSprite;
     private Collider2D stopperCollider;
 
     private void Awake()
@@ -20,7 +22,7 @@ public class Box : MonoBehaviour
             BoxMovement boxMovement = collision.gameObject.GetComponent<BoxMovement>();
             if (boxMovement != null)
             {
-                boxMovement.StopOnStopper();
+                boxMovement.StopOnStopper(stoppedBoxSprite, transform.position);
             }
 
             // Box가 도착하면 BoxStopper 자신의 충돌을 해제

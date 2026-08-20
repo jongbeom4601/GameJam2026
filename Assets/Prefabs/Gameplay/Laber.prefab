@@ -140,7 +140,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 2}
+  m_Size: {x: 1.5, y: 1.5}
   m_EdgeRadius: 0
 --- !u!114 &4707647683438743700
 MonoBehaviour:
@@ -198,3 +198,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Laber
   TargetObject: {fileID: 0}
+  offSprite: {fileID: 5258334343253962616, guid: 8c484882ce6a0644ca78c72af829e5ff, type: 3}
+  onSprite: {fileID: -2034304328462991002, guid: 32a58484ef9083046b43d4731cb6ec39, type: 3}
