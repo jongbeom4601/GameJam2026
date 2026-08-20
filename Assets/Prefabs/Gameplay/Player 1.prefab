@@ -15,6 +15,9 @@ GameObject:
   - component: {fileID: 5100316128996632238}
   - component: {fileID: 2029141913845058445}
   - component: {fileID: 7804501463219874001}
+  - component: {fileID: 6600000000000000001}
+  - component: {fileID: 6600000000000000002}
+  - component: {fileID: 6600000000000000003}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Player
@@ -215,11 +218,13 @@ MonoBehaviour:
   moveSpeed: 5
   boxInteractionRange: 1.25
   recordDistance: 0.2
-  returnSpeed: 5
+  returnSpeed: 7.5
+  maximumReturnSpeed: 75
+  returnAcceleration: 5.5
   returnTime: 20
+  timerRestartDelay: 0.3
   isInteract: 0
   giveInteract: 0
-  isReturning: 0
   returnEX: 0
 --- !u!114 &7804501463219874001
 MonoBehaviour:
@@ -249,3 +254,96 @@ MonoBehaviour:
   - {fileID: 7028093898681244410, guid: 9ed5e594986eb8f4fb921a89f5860a97, type: 3}
   - {fileID: 107162740974402421, guid: 9ed5e594986eb8f4fb921a89f5860a97, type: 3}
   framesPerSecond: 8
+--- !u!114 &6600000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095493072225404353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4c62d1dd98e4f7f9f955443a0e37f21, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFootstepVfx
+  firstEffectFrames:
+  - {fileID: 1851000101, guid: 37f23ffed65f454489d0b878983dad61, type: 3}
+  - {fileID: 1851000102, guid: 37f23ffed65f454489d0b878983dad61, type: 3}
+  - {fileID: 1851000103, guid: 37f23ffed65f454489d0b878983dad61, type: 3}
+  - {fileID: 1851000104, guid: 37f23ffed65f454489d0b878983dad61, type: 3}
+  - {fileID: 1851000105, guid: 37f23ffed65f454489d0b878983dad61, type: 3}
+  - {fileID: 1851000106, guid: 37f23ffed65f454489d0b878983dad61, type: 3}
+  secondEffectFrames:
+  - {fileID: 1851000201, guid: 6bd1e7e5dbd54e9ab4eb2498c989b46a, type: 3}
+  - {fileID: 1851000202, guid: 6bd1e7e5dbd54e9ab4eb2498c989b46a, type: 3}
+  - {fileID: 1851000203, guid: 6bd1e7e5dbd54e9ab4eb2498c989b46a, type: 3}
+  - {fileID: 1851000204, guid: 6bd1e7e5dbd54e9ab4eb2498c989b46a, type: 3}
+  - {fileID: 1851000205, guid: 6bd1e7e5dbd54e9ab4eb2498c989b46a, type: 3}
+  - {fileID: 1851000206, guid: 6bd1e7e5dbd54e9ab4eb2498c989b46a, type: 3}
+  spawnDistance: 0.8
+  frameDuration: 0.06
+  footOffset: {x: 0, y: -0.48}
+  effectScale: 1
+  sortingOrderOffset: 1
+  downwardSortingOrderOffset: -1
+  poolSize: 4
+--- !u!114 &6600000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095493072225404353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6f5b9a38354666bb248c3d5f2d26b0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTimeGaugeUI
+  gaugeFrame: {fileID: 1852000101, guid: 6834e2c561714cd8b3c2fd48629972c5, type: 3}
+  lavaTexture: {fileID: 2800000, guid: 071acb21b09e401cb4b44be952b9a75e, type: 3}
+  referenceResolution: {x: 1920, y: 1080}
+  gaugeSize: {x: 0, y: 96}
+  topOffset: {x: 0, y: 0}
+  horizontalPadding: 12
+  verticalPadding: 10
+  fillColor: {r: 0.9764706, g: 0.57254905, b: 0.32156864, a: 1}
+  lavaEdgeWidth: 192
+  lavaVisibleSurfaceWidth: 96
+  lavaFramesPerSecond: 8
+  sortingOrder: 200
+--- !u!114 &6600000000000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095493072225404353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fd8b1f963b447899cead1602c2a61f4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRewindVfx
+  preparationTexture: {fileID: 2800000, guid: fa17e8b2560b4c36aa6c3f64b31a865d, type: 3}
+  preparationFrameCount: 29
+  preparationFrameDuration: 0.04
+  preparationOffset: {x: 0, y: 0.1}
+  preparationScale: 1.1
+  preparationSortingOrderOffset: 10
+  rewindShader: {fileID: 4800000, guid: 6d13db0df9cc4b4e8c07e6e421135f60, type: 3}
+  playerNeonGreen: {r: 0.5176471, g: 1, b: 0, a: 1}
+  playerNeonCyan: {r: 0, g: 1, b: 1, a: 1}
+  rewindingPlayerAlpha: 0.55
+  playerColorPulseSpeed: 12
+  screenFilterShader: {fileID: 4800000, guid: 3cbade196fa04d3aa0d3054712a7be83, type: 3}
+  screenFilterIntensity: 0.35
+  screenFilterFadeSpeed: 9
+  screenFilterSortingOrder: 4000
+  afterimageInterval: 0.03
+  afterimageLifetime: 0.24
+  afterimageScale: 1.08
+  chromaticSeparation: 0.04
+  neonGreen: {r: 0.5176471, g: 1, b: 0, a: 0.5019608}
+  neonCyan: {r: 0, g: 1, b: 1, a: 0.4392157}
+  neonMagenta: {r: 1, g: 0, b: 0.88235295, a: 0.38039216}
+  afterimageSortingOrderOffset: -1
+  poolSize: 18
