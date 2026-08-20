@@ -11,16 +11,16 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed =5f;
     [Header("경로 저장 거리 설정")]
-    [SerializeField] private float recordDistance = 0.2f;
+    public float recordDistance = 0.2f;
     [Header("되돌아가기 속도 설정")]
-    [SerializeField] private float returnSpeed = 5f;
+    public float returnSpeed = 5f;
     [Header("되돌아가는 시간 설정")]
-    [SerializeField] private float returnTime = 20f;
+    public float returnTime = 20f;
     private float returnningTime;
 
    [SerializeField] private bool isInteract = false;
     public bool giveInteract = false;
-    private bool isReturning = false;
+    public bool isReturning = false;
 
     public bool returnEX = false;
 
@@ -28,7 +28,6 @@ public class PlayerController : MonoBehaviour
     private List<Vector3> path = new List<Vector3>();
     
     private Vector3 lastRecordedPosition;
-
     private Rigidbody2D rb;
     private PlayerInput playerInput;
 
