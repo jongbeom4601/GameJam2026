@@ -18,7 +18,7 @@ public class Laber : MonoBehaviour
         {
             targetSprite = TargetObject.GetComponent<SpriteRenderer>();
             TargetCollider = TargetObject.GetComponent<Collider2D>();
-            TargetCollider.enabled = false;
+            TargetCollider.enabled = true;
 
 
         }
@@ -36,14 +36,14 @@ public class Laber : MonoBehaviour
             // 이미지 변경으로 대체
             sprite.color = Color.red;
             targetSprite.color = new Color(1f, 1f, 1f, 1f);
-            TargetCollider.enabled = true;
+            TargetCollider.enabled = false;
         }
         else if (!InterScript.exInteract && TargetObject != null)
         {
             // 이미지 변경으로 대체
             sprite.color = Color.white;
             targetSprite.color = new Color(1f, 1f, 1f, 0.390625f);
-            TargetCollider.enabled = false;
+            TargetCollider.enabled = true;
         }
     }
 }

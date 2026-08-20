@@ -24,7 +24,11 @@ public class InteractObject : MonoBehaviour
         {
             PlayerController playerScr = other.GetComponent<PlayerController>();
 
-            exInteract = playerScr.giveInteract;
+            if (playerScr.giveInteract)
+            {
+                exInteract = !exInteract;
+                playerScr.giveInteract = false;
+            }
         }
 
     }
