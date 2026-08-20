@@ -27,6 +27,7 @@ public class ReturnManager : MonoBehaviour
     [SerializeField] private float remainingTime;
 
     public float RemainingTime => remainingTime;
+    public float LoopDuration => rewindStartDelay;
 
 
     // =====================================================
@@ -36,11 +37,13 @@ public class ReturnManager : MonoBehaviour
     private float elapsedTime;
 
     private bool isRewinding = false;
+    private float rewindProgress;
 
     // ★ Stack에 기록 가능한 상태인지
     private bool canRecord = true;
 
     public bool IsRewinding => isRewinding;
+    public float RewindProgress => rewindProgress;
 
 
     // =====================================================
@@ -217,6 +220,7 @@ public class ReturnManager : MonoBehaviour
         canRecord = false;
 
         isRewinding = true;
+        rewindProgress = 0f;
 
         remainingTime = 0f;
 
@@ -294,6 +298,8 @@ public class ReturnManager : MonoBehaviour
         // Stack을 최신 기록부터 하나씩 꺼낸다.
         // ---------------------------------------------
 
+        int totalRecordCount = movementHistory.Count;
+
         while (movementHistory.Count > 0)
         {
             MovementRecord record =
@@ -310,6 +316,10 @@ public class ReturnManager : MonoBehaviour
                     record.previousPosition
                 )
             );
+
+            rewindProgress = totalRecordCount > 0
+                ? 1f - (float)movementHistory.Count / totalRecordCount
+                : 1f;
         }
 
 
@@ -332,6 +342,7 @@ public class ReturnManager : MonoBehaviour
 
         // 되감기 종료
         isRewinding = false;
+        rewindProgress = 1f;
 
 
         // 다음 주기 타이머 초기화

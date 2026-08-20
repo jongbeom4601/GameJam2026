@@ -40,15 +40,24 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private PlayerInput playerInput;
     private PlayerRewindVfx rewindVfx;
+    private ReturnManager externalReturnManager;
     private BoxMovement selectedBox;
     private Vector2 lastMoveDirection = Vector2.down;
     private bool useInternalReturn;
 
-    public float ReturnDurationSeconds => returnTime;
-    public float ElapsedReturnSeconds => Mathf.Clamp(returnningTime, 0f, returnTime);
-    public bool IsReturning => isReturning;
+    public float ReturnDurationSeconds => externalReturnManager != null
+        ? externalReturnManager.LoopDuration
+        : returnTime;
+    public float ElapsedReturnSeconds => externalReturnManager != null
+        ? Mathf.Max(0f, externalReturnManager.LoopDuration - externalReturnManager.RemainingTime)
+        : Mathf.Clamp(returnningTime, 0f, returnTime);
+    public bool IsReturning => externalReturnManager != null
+        ? externalReturnManager.IsRewinding
+        : isReturning;
     public bool IsPreparingReturn => isPreparingReturn;
-    public float ReturnProgress => Mathf.Clamp01(returnProgress);
+    public float ReturnProgress => externalReturnManager != null
+        ? externalReturnManager.RewindProgress
+        : Mathf.Clamp01(returnProgress);
 
 
     private void Awake()
@@ -56,7 +65,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         playerInput = GetComponent<PlayerInput>();
         rewindVfx = GetComponent<PlayerRewindVfx>();
-        useInternalReturn = FindAnyObjectByType<ReturnManager>() == null;
+        externalReturnManager = FindAnyObjectByType<ReturnManager>();
+        useInternalReturn = externalReturnManager == null;
         playerInput.SwitchCurrentActionMap("Player");
     }
 
@@ -73,6 +83,7 @@ public class PlayerController : MonoBehaviour
         // ReturnManager가 있는 씬에서는 중복 되감기를 실행하지 않음
         if (!useInternalReturn)
         {
+            UpdatePreparationAnimation();
             return;
         }
 
@@ -227,13 +238,22 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        float safeReturnTime = Mathf.Max(0.01f, returnTime);
+        if (IsReturning)
+        {
+            rewindVfx.HidePreparation();
+            isPreparingReturn = false;
+            return;
+        }
+
+        float safeReturnTime = Mathf.Max(0.01f, ReturnDurationSeconds);
         float preparationDuration = Mathf.Min(
             safeReturnTime,
             rewindVfx.PreparationDurationSeconds);
         float preparationStartTime = safeReturnTime - preparationDuration;
 
-        if (returnningTime < preparationStartTime)
+        float elapsedReturnTime = ElapsedReturnSeconds;
+
+        if (elapsedReturnTime < preparationStartTime)
         {
             if (isPreparingReturn)
             {
@@ -248,7 +268,7 @@ public class PlayerController : MonoBehaviour
         float preparationProgress = Mathf.InverseLerp(
             preparationStartTime,
             safeReturnTime,
-            returnningTime);
+            elapsedReturnTime);
         rewindVfx.SetPreparationProgress(preparationProgress);
     }
 

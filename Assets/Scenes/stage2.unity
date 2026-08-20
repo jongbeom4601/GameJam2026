@@ -659,7 +659,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ReturnManager
   playerTag: Player
   boxTag: Box
-  rewindStartDelay: 10
+  rewindStartDelay: 7
   rewindSpeed: 30
   recordThreshold: 0.001
   remainingTime: 0
