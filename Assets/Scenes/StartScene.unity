@@ -376,7 +376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8fa6be085a74d349107665f9266480e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StartMenuActions
-  gameSceneName: SampleScene
+  gameSceneName: stage1
   optionPanel: {fileID: 350000000}
 --- !u!1 &310000000
 GameObject:

@@ -110,7 +110,7 @@ public sealed class PlayerTimeLoopRecorder : MonoBehaviour
 
         if (sceneLoopResetter == null)
         {
-            sceneLoopResetter = FindFirstObjectByType<SceneLoopResetter>();
+            sceneLoopResetter = FindAnyObjectByType<SceneLoopResetter>();
         }
 
         if (sceneLoopResetter == null)
