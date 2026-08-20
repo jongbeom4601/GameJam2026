@@ -2,20 +2,24 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed;
 
-    [SerializeField] private bool isInteract;
-
     private Vector2 movementInput;
 
     private Rigidbody2D rb;
+    private PlayerInput playerInput;
 
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerInput = GetComponent<PlayerInput>();
+        playerInput.SwitchCurrentActionMap("Player");
     }
 
     private void Update()
@@ -32,30 +36,5 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputValue value)
     {
         movementInput = value.Get<Vector2>();
-    }
-    
-    public void OnInteract(InputValue value)
-    {
-        if (isInteract)
-        {
-            Debug.Log("상호작용");
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Interactable")
-        {
-            isInteract = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Interactable")
-        {
-            isInteract = false;
-        }
-
     }
 }
