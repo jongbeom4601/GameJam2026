@@ -2477,6 +2477,10 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0.41568628
       objectReference: {fileID: 0}
+    - target: {fileID: 6598141149125853591, guid: 4f679e642073da44295ff7c7300bf737, type: 3}
+      propertyPath: sceneName
+      value: ending
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4823,6 +4827,10 @@ MonoBehaviour:
   boxTag: Box
   rewindStartDelay: 12
   rewindSpeed: 30
+  maximumRewindSpeed: 300
+  rewindAcceleration: 5.5
+  fallbackRewindDuration: 1.2
+  timerRestartDelay: 0.3
   recordThreshold: 0.001
   remainingTime: 0
 --- !u!4 &1636002404
