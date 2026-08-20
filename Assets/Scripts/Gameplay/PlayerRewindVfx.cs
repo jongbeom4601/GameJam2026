@@ -19,6 +19,15 @@ public sealed class PlayerRewindVfx : MonoBehaviour
     [SerializeField, Min(0.01f)] private float preparationScale = 1.1f;
     [SerializeField] private int preparationSortingOrderOffset = 10;
 
+    [Header("Pre-Rewind Sound")]
+    [SerializeField] private AudioClip preparationSound;
+    [SerializeField, Range(0f, 1f)] private float preparationSoundVolume = 1f;
+    [SerializeField, Range(1f, 3f)] private float preparationSoundGain = 3f;
+
+    [Header("Rewind Sound")]
+    [SerializeField] private AudioClip rewindSound;
+    [SerializeField, Range(0f, 1f)] private float rewindSoundVolume = 0.25f;
+
     [Header("Rewinding Player Appearance")]
     [SerializeField] private Shader rewindShader;
     [SerializeField] private Color playerNeonGreen = new Color32(132, 255, 0, 255);
@@ -45,6 +54,10 @@ public sealed class PlayerRewindVfx : MonoBehaviour
 
     private PlayerController playerController;
     private SpriteRenderer playerRenderer;
+    private AudioSource preparationAudioSource;
+    private AudioSource preparationBoostAudioSource;
+    private AudioSource preparationSecondBoostAudioSource;
+    private AudioSource rewindAudioSource;
     private SpriteRenderer preparationRenderer;
     private Sprite[] preparationFrames;
     private Transform afterimageRoot;
@@ -60,6 +73,7 @@ public sealed class PlayerRewindVfx : MonoBehaviour
     private GameObject screenFilterCanvasObject;
     private Material screenFilterMaterial;
     private float screenFilterStrength;
+    private bool wasReturning;
 
     private sealed class AfterimageSlot
     {
@@ -77,11 +91,16 @@ public sealed class PlayerRewindVfx : MonoBehaviour
     public float PreparationDurationSeconds =>
         Mathf.Max(MinimumDuration, preparationFrameDuration) *
         Mathf.Max(1, preparationFrameCount);
+    public float RewindSoundDurationSeconds => rewindSound != null
+        ? Mathf.Max(MinimumDuration, rewindSound.length)
+        : 1.2f;
 
     private void Awake()
     {
         playerController = GetComponent<PlayerController>();
         playerRenderer = GetComponent<SpriteRenderer>();
+        CreatePreparationAudioSource();
+        CreateRewindAudioSource();
 
         if (rewindShader != null)
         {
@@ -105,6 +124,7 @@ public sealed class PlayerRewindVfx : MonoBehaviour
 
         Vector3 currentPosition = transform.position;
         bool isReturning = playerController != null && playerController.IsReturning;
+        UpdateRewindSound(isReturning);
         UpdatePlayerAppearance(isReturning);
         UpdateScreenFilter(isReturning, Time.unscaledDeltaTime);
 
@@ -125,6 +145,131 @@ public sealed class PlayerRewindVfx : MonoBehaviour
         }
 
         previousPosition = currentPosition;
+    }
+
+    private void CreateRewindAudioSource()
+    {
+        if (rewindSound == null)
+        {
+            return;
+        }
+
+        rewindAudioSource = gameObject.AddComponent<AudioSource>();
+        rewindAudioSource.playOnAwake = false;
+        rewindAudioSource.loop = false;
+        rewindAudioSource.spatialBlend = 0f;
+        rewindAudioSource.clip = rewindSound;
+        rewindAudioSource.volume = rewindSoundVolume;
+        SfxMuteToggle.RegisterSoundEffect(rewindAudioSource);
+    }
+
+    private void UpdateRewindSound(bool isReturning)
+    {
+        if (rewindAudioSource != null)
+        {
+            if (isReturning && !wasReturning)
+            {
+                StopPreparationSound();
+                if (preparationRenderer != null)
+                {
+                    preparationRenderer.enabled = false;
+                }
+
+                rewindAudioSource.Stop();
+                rewindAudioSource.time = 0f;
+                rewindAudioSource.volume = rewindSoundVolume;
+                rewindAudioSource.Play();
+            }
+            else if (!isReturning && wasReturning)
+            {
+                rewindAudioSource.Stop();
+            }
+        }
+
+        wasReturning = isReturning;
+    }
+
+    private void CreatePreparationAudioSource()
+    {
+        if (preparationSound == null)
+        {
+            return;
+        }
+
+        preparationAudioSource = gameObject.AddComponent<AudioSource>();
+        preparationAudioSource.playOnAwake = false;
+        preparationAudioSource.loop = false;
+        preparationAudioSource.spatialBlend = 0f;
+        preparationAudioSource.clip = preparationSound;
+        preparationAudioSource.volume = preparationSoundVolume;
+        SfxMuteToggle.RegisterSoundEffect(preparationAudioSource);
+
+        preparationBoostAudioSource = gameObject.AddComponent<AudioSource>();
+        preparationBoostAudioSource.playOnAwake = false;
+        preparationBoostAudioSource.loop = false;
+        preparationBoostAudioSource.spatialBlend = 0f;
+        preparationBoostAudioSource.clip = preparationSound;
+        preparationBoostAudioSource.volume = Mathf.Clamp01(
+            preparationSoundVolume * (preparationSoundGain - 1f));
+        SfxMuteToggle.RegisterSoundEffect(preparationBoostAudioSource);
+
+        preparationSecondBoostAudioSource = gameObject.AddComponent<AudioSource>();
+        preparationSecondBoostAudioSource.playOnAwake = false;
+        preparationSecondBoostAudioSource.loop = false;
+        preparationSecondBoostAudioSource.spatialBlend = 0f;
+        preparationSecondBoostAudioSource.clip = preparationSound;
+        preparationSecondBoostAudioSource.volume = Mathf.Clamp01(
+            preparationSoundVolume * (preparationSoundGain - 2f));
+        SfxMuteToggle.RegisterSoundEffect(preparationSecondBoostAudioSource);
+    }
+
+    private void PlayPreparationSound()
+    {
+        if (preparationAudioSource == null || preparationAudioSource.isPlaying)
+        {
+            return;
+        }
+
+        preparationAudioSource.Stop();
+        preparationAudioSource.time = 0f;
+        preparationAudioSource.volume = preparationSoundVolume;
+        preparationAudioSource.Play();
+
+        if (preparationBoostAudioSource != null)
+        {
+            preparationBoostAudioSource.Stop();
+            preparationBoostAudioSource.time = 0f;
+            preparationBoostAudioSource.volume = Mathf.Clamp01(
+                preparationSoundVolume * (preparationSoundGain - 1f));
+            preparationBoostAudioSource.Play();
+        }
+
+        if (preparationSecondBoostAudioSource != null)
+        {
+            preparationSecondBoostAudioSource.Stop();
+            preparationSecondBoostAudioSource.time = 0f;
+            preparationSecondBoostAudioSource.volume = Mathf.Clamp01(
+                preparationSoundVolume * (preparationSoundGain - 2f));
+            preparationSecondBoostAudioSource.Play();
+        }
+    }
+
+    private void StopPreparationSound()
+    {
+        if (preparationAudioSource != null)
+        {
+            preparationAudioSource.Stop();
+        }
+
+        if (preparationBoostAudioSource != null)
+        {
+            preparationBoostAudioSource.Stop();
+        }
+
+        if (preparationSecondBoostAudioSource != null)
+        {
+            preparationSecondBoostAudioSource.Stop();
+        }
     }
 
     private void UpdatePlayerAppearance(bool isReturning)
@@ -249,6 +394,7 @@ public sealed class PlayerRewindVfx : MonoBehaviour
                 playerRenderer.sortingOrder + preparationSortingOrderOffset;
             preparationRenderer.maskInteraction = playerRenderer.maskInteraction;
             preparationRenderer.enabled = true;
+            PlayPreparationSound();
         }
 
         int frameIndex = Mathf.Min(
@@ -260,6 +406,8 @@ public sealed class PlayerRewindVfx : MonoBehaviour
 
     public void HidePreparation()
     {
+        StopPreparationSound();
+
         if (preparationRenderer != null)
         {
             preparationRenderer.enabled = false;
@@ -431,6 +579,14 @@ public sealed class PlayerRewindVfx : MonoBehaviour
 
     private void OnDisable()
     {
+        StopPreparationSound();
+
+        if (rewindAudioSource != null)
+        {
+            rewindAudioSource.Stop();
+        }
+        wasReturning = false;
+
         RestorePlayerAppearance();
 
         screenFilterStrength = 0f;
@@ -501,6 +657,9 @@ public sealed class PlayerRewindVfx : MonoBehaviour
         preparationFrameCount = Mathf.Max(1, preparationFrameCount);
         preparationFrameDuration = Mathf.Max(MinimumDuration, preparationFrameDuration);
         preparationScale = Mathf.Max(0.01f, preparationScale);
+        preparationSoundVolume = Mathf.Clamp01(preparationSoundVolume);
+        preparationSoundGain = Mathf.Clamp(preparationSoundGain, 1f, 3f);
+        rewindSoundVolume = Mathf.Clamp01(rewindSoundVolume);
         rewindingPlayerAlpha = Mathf.Clamp01(rewindingPlayerAlpha);
         playerColorPulseSpeed = Mathf.Max(0.1f, playerColorPulseSpeed);
         screenFilterIntensity = Mathf.Clamp01(screenFilterIntensity);

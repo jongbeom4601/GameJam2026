@@ -153,3 +153,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NextStage
   sceneName: 
+  celebrationDuration: 2
+  jumpDuration: 0.45
+  jumpHeight: 0.22
+  crownTexture: {fileID: 2800000, guid: 1ea2dd296e124ae0ad526d8bae3873ec, type: 3}
+  crownColumns: 8
+  crownFrameCount: 37
+  crownFrameDuration: 0.04
+  crownOffset: {x: 0, y: 0.95}
+  crownScale: 1.25
+  crownSortingOrderOffset: 1000
+  successSound: {fileID: 8300000, guid: 02624666bfc44238a01ae2e89fb94e48, type: 3}
+  successSoundVolume: 1

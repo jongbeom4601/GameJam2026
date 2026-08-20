@@ -288,59 +288,90 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator ReturnToStart()
     {
-        if (path.Count <= 1)
-        {
-            returnningTime = 0f;
-            timerRestartDelayRemaining = timerRestartDelay;
-            returnProgress = 1f;
-            yield break;
-        }
-
         isReturning = true;
         returnProgress = 0f;
 
-        float totalReturnDistance = Vector3.Distance(transform.position, path[path.Count - 1]);
-
-        for (int i = path.Count - 1; i > 0; i--)
-        {
-            totalReturnDistance += Vector3.Distance(path[i], path[i - 1]);
-        }
-
-        totalReturnDistance = Mathf.Max(0.001f, totalReturnDistance);
-        float completedDistance = 0f;
-        float currentReturnSpeed = Mathf.Max(0.01f, returnSpeed);
-        float targetReturnSpeed = Mathf.Max(currentReturnSpeed, maximumReturnSpeed);
-
+        List<Vector3> returnWaypoints = new List<Vector3>(path.Count);
         for (int i = path.Count - 1; i >= 0; i--)
         {
-            Vector3 targetPosition = path[i];
-            float segmentDistance = Vector3.Distance(transform.position, targetPosition);
+            returnWaypoints.Add(path[i]);
+        }
 
-            while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
+        Vector3 segmentStart = transform.position;
+        float totalReturnDistance = 0f;
+        foreach (Vector3 waypoint in returnWaypoints)
+        {
+            totalReturnDistance += Vector3.Distance(segmentStart, waypoint);
+            segmentStart = waypoint;
+        }
+
+        float rewindDuration = rewindVfx != null
+            ? rewindVfx.RewindSoundDurationSeconds
+            : 1.2f;
+        rewindDuration = Mathf.Max(0.01f, rewindDuration);
+
+        int waypointIndex = 0;
+        float completedDistance = 0f;
+        segmentStart = transform.position;
+        float elapsedRewindTime = 0f;
+
+        // The rewind sound begins in LateUpdate on this frame.
+        yield return null;
+
+        while (elapsedRewindTime < rewindDuration)
+        {
+            elapsedRewindTime = Mathf.Min(
+                rewindDuration,
+                elapsedRewindTime + Time.unscaledDeltaTime);
+
+            float distanceProgress = EvaluateReturnDistanceProgress(
+                elapsedRewindTime,
+                rewindDuration);
+            float targetDistance = totalReturnDistance * distanceProgress;
+
+            while (waypointIndex < returnWaypoints.Count)
             {
-                float accelerationStep = 1f - Mathf.Exp(
-                    -Mathf.Max(0.01f, returnAcceleration) * Time.deltaTime);
-                currentReturnSpeed = Mathf.Lerp(
-                    currentReturnSpeed,
-                    targetReturnSpeed,
-                    accelerationStep);
+                Vector3 targetPosition = returnWaypoints[waypointIndex];
+                float segmentDistance = Vector3.Distance(segmentStart, targetPosition);
 
-                transform.position = Vector3.MoveTowards(
-                    transform.position,
-                    targetPosition,
-                    currentReturnSpeed * Time.deltaTime
-                );
+                if (segmentDistance <= 0.0001f)
+                {
+                    transform.position = targetPosition;
+                    segmentStart = targetPosition;
+                    waypointIndex++;
+                    continue;
+                }
 
-                float segmentProgress = segmentDistance -
-                    Vector3.Distance(transform.position, targetPosition);
-                returnProgress = (completedDistance + segmentProgress) / totalReturnDistance;
+                if (targetDistance < completedDistance + segmentDistance)
+                {
+                    float segmentProgress = Mathf.InverseLerp(
+                        completedDistance,
+                        completedDistance + segmentDistance,
+                        targetDistance);
+                    transform.position = Vector3.Lerp(
+                        segmentStart,
+                        targetPosition,
+                        segmentProgress);
+                    break;
+                }
 
-                yield return null;
+                transform.position = targetPosition;
+                completedDistance += segmentDistance;
+                segmentStart = targetPosition;
+                waypointIndex++;
             }
 
-            transform.position = targetPosition;
-            completedDistance += segmentDistance;
-            returnProgress = completedDistance / totalReturnDistance;
+            returnProgress = distanceProgress;
+
+            if (elapsedRewindTime < rewindDuration)
+            {
+                yield return null;
+            }
+        }
+
+        if (returnWaypoints.Count > 0)
+        {
+            transform.position = returnWaypoints[returnWaypoints.Count - 1];
         }
 
         returnProgress = 1f;
@@ -351,6 +382,39 @@ public class PlayerController : MonoBehaviour
         lastRecordedPosition = transform.position;
         returnningTime = 0f;
         timerRestartDelayRemaining = timerRestartDelay;
+    }
+
+    private float EvaluateReturnDistanceProgress(float elapsed, float duration)
+    {
+        float startSpeed = Mathf.Max(0.01f, returnSpeed);
+        float targetSpeed = Mathf.Max(startSpeed, maximumReturnSpeed);
+        float acceleration = Mathf.Max(0.01f, returnAcceleration);
+
+        float elapsedDistance = IntegratedReturnSpeed(
+            Mathf.Clamp(elapsed, 0f, duration),
+            startSpeed,
+            targetSpeed,
+            acceleration);
+        float totalDistance = IntegratedReturnSpeed(
+            duration,
+            startSpeed,
+            targetSpeed,
+            acceleration);
+
+        return totalDistance > 0.0001f
+            ? Mathf.Clamp01(elapsedDistance / totalDistance)
+            : Mathf.Clamp01(elapsed / duration);
+    }
+
+    private static float IntegratedReturnSpeed(
+        float time,
+        float startSpeed,
+        float targetSpeed,
+        float acceleration)
+    {
+        return targetSpeed * time -
+            (targetSpeed - startSpeed) *
+            (1f - Mathf.Exp(-acceleration * time)) / acceleration;
     }
 
 }

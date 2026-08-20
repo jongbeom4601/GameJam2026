@@ -198,3 +198,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Laber
   TargetObject: {fileID: 0}
+  interactionSound: {fileID: 8300000, guid: 9eca82a886ab4c4f9412c6610552aa71, type: 3}
+  interactionSoundVolume: 1

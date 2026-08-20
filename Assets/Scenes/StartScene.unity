@@ -1605,6 +1605,7 @@ GameObject:
   - component: {fileID: 370000003}
   - component: {fileID: 370000002}
   - component: {fileID: 370000005}
+  - component: {fileID: 370000006}
   m_Layer: 5
   m_Name: SFXButton
   m_TagString: Untagged
@@ -1729,6 +1730,24 @@ MonoBehaviour:
   pressedSprite: {fileID: 1734079054, guid: 160639d1be8e46c284ef07184f107256, type: 3}
   contentToMove: {fileID: 370000011}
   contentPressOffset: 12
+--- !u!114 &370000006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 370000000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe75b1490855484691ec3d7f58a4b806, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SfxMuteToggle
+  iconTexture: {fileID: 2800000, guid: 21b8dd8614494ff4970bd5d75e67fc54, type: 3}
+  rowFromTop: 8
+  columnFromLeft: 2
+  iconSize: {x: 116, y: 116}
+  iconOffset: {x: 0, y: 0}
+  iconParent: {fileID: 370000011}
 --- !u!1 &370000010
 GameObject:
   m_ObjectHideFlags: 0
@@ -2302,6 +2321,10 @@ MonoBehaviour:
   defaultHotspot: {x: 4, y: 4}
   interactiveHotspot: {x: 4, y: 4}
   cursorMode: 0
+  buttonPressedSound: {fileID: 8300000, guid: 5523ff650ec74a2782283f688814ff21, type: 3}
+  buttonHoverSound: {fileID: 8300000, guid: 05f14d38437643f78fb654304ff1eeb1, type: 3}
+  buttonPressedVolume: 1
+  buttonHoverVolume: 1
 --- !u!114 &400000003
 MonoBehaviour:
   m_ObjectHideFlags: 0

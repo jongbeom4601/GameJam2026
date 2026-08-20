@@ -149,7 +149,25 @@ public sealed class PlayerTimeGaugeUI : MonoBehaviour
             typeof(CanvasScaler));
 
         Canvas canvas = canvasObject.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        Camera renderCamera = Camera.main;
+        if (renderCamera == null)
+        {
+            renderCamera = FindAnyObjectByType<Camera>();
+        }
+
+        if (renderCamera != null)
+        {
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = renderCamera;
+            canvas.planeDistance = Mathf.Max(
+                0.1f,
+                renderCamera.nearClipPlane + 0.01f);
+        }
+        else
+        {
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        }
+
         canvas.pixelPerfect = true;
         canvas.sortingOrder = sortingOrder;
 
