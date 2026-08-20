@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(InteractObject))]
 public class Laber : MonoBehaviour
 {
+    private bool isLaber;
     private InteractObject InterScript;
     [SerializeField] private GameObject TargetObject;
     private SpriteRenderer sprite;
