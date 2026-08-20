@@ -3,10 +3,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(PlayerInput))]
 public class InteractObject : MonoBehaviour
 {
-    private bool isInteract;
     public bool exInteract = false;
     private PlayerInput InteractInput;
 
@@ -20,34 +18,13 @@ public class InteractObject : MonoBehaviour
         }
     }
 
-    private void Awake()
-    {
-        InteractInput = GetComponent<PlayerInput>();
-        InteractInput.SwitchCurrentActionMap("Interactable");
-    }
-
-    public void OnInteract(InputValue value)
-    {
-        if (isInteract)
-        {
-            Debug.Log("상호작용");
-            exInteract = !exInteract;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerStay2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")
         {
-            isInteract = true;
-        }
-    }
+            PlayerController playerScr = other.GetComponent<PlayerController>();
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Player")
-        {
-            isInteract = false;
+            exInteract = playerScr.giveInteract;
         }
 
     }

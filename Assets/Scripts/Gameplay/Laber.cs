@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
 
 [RequireComponent(typeof(InteractObject))]
 public class Laber : MonoBehaviour
@@ -9,6 +7,7 @@ public class Laber : MonoBehaviour
     [SerializeField] private GameObject TargetObject;
     private SpriteRenderer sprite;
     private SpriteRenderer targetSprite;
+    private Collider2D TargetCollider;
 
 
     private void Awake()
@@ -18,6 +17,8 @@ public class Laber : MonoBehaviour
         if (TargetObject != null)
         {
             targetSprite = TargetObject.GetComponent<SpriteRenderer>();
+            TargetCollider = TargetObject.GetComponent<Collider2D>();
+            TargetCollider.enabled = false;
 
 
         }
@@ -35,13 +36,14 @@ public class Laber : MonoBehaviour
             // 이미지 변경으로 대체
             sprite.color = Color.red;
             targetSprite.color = new Color(1f, 1f, 1f, 1f);
-            Debug.Log("레버 켜짐");
+            TargetCollider.enabled = true;
         }
         else if (!InterScript.exInteract && TargetObject != null)
         {
+            // 이미지 변경으로 대체
             sprite.color = Color.white;
             targetSprite.color = new Color(1f, 1f, 1f, 0.390625f);
-            Debug.Log("레버 꺼짐");
+            TargetCollider.enabled = false;
         }
     }
 }
