@@ -8,6 +8,7 @@ public class Laber : MonoBehaviour
     [SerializeField] private GameObject TargetObject;
     private SpriteRenderer sprite;
     private SpriteRenderer targetSprite;
+    private SpriteRenderer interactionOutline;
     private Collider2D TargetCollider;
 
 
@@ -15,6 +16,7 @@ public class Laber : MonoBehaviour
     {
         InterScript = GetComponent<InteractObject>();
         sprite = GetComponent<SpriteRenderer>();
+        CreateInteractionOutline();
         if (TargetObject != null)
         {
             targetSprite = TargetObject.GetComponent<SpriteRenderer>();
@@ -22,6 +24,42 @@ public class Laber : MonoBehaviour
             TargetCollider.enabled = true;
 
 
+        }
+    }
+
+    private void CreateInteractionOutline()
+    {
+        if (sprite == null)
+            return;
+
+        GameObject outlineObject = new GameObject("Interaction Outline");
+        outlineObject.transform.SetParent(transform, false);
+        outlineObject.transform.localScale = Vector3.one * 1.1f;
+
+        interactionOutline = outlineObject.AddComponent<SpriteRenderer>();
+        interactionOutline.sprite = sprite.sprite;
+        interactionOutline.color = Color.cyan;
+        interactionOutline.sortingLayerID = sprite.sortingLayerID;
+        interactionOutline.sortingOrder = sprite.sortingOrder;
+        interactionOutline.enabled = false;
+
+        // [수정] 원본보다 뒤에 테두리가 보이도록 런타임 정렬 순서 조정
+        sprite.sortingOrder += 1;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && interactionOutline != null)
+        {
+            interactionOutline.enabled = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player") && interactionOutline != null)
+        {
+            interactionOutline.enabled = false;
         }
     }
 

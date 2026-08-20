@@ -1,19 +1,35 @@
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider2D))]
 public class Box : MonoBehaviour
 {
-    private void OnTriggerStay2D(Collider2D collision)
+    [SerializeField] private float positionTolerance = 0.1f;
+    private Collider2D stopperCollider;
+
+    private void Awake()
     {
-        if (collision.gameObject.tag == "Box")
+        stopperCollider = GetComponent<Collider2D>();
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Box") &&
+            Vector2.Distance(transform.position, collision.transform.position) <= positionTolerance)
         {
-            float dir = Vector3.Distance(transform.position, collision.transform.position);
-
-            Debug.Log(dir);
-
-            if (dir <= 0.5)
+            // [수정] 단순 접촉이 아니라 두 오브젝트가 같은 위치일 때만 도착 처리
+            BoxMovement boxMovement = collision.gameObject.GetComponent<BoxMovement>();
+            if (boxMovement != null)
             {
-                collision.enabled = false;
+                boxMovement.StopOnStopper();
             }
+
+            // Box가 도착하면 BoxStopper 자신의 충돌을 해제
+            stopperCollider.enabled = false;
         }
+    }
+
+    public void ResetAfterRewind()
+    {
+        stopperCollider.enabled = true;
     }
 }

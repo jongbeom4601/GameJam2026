@@ -326,6 +326,9 @@ public class ReturnManager : MonoBehaviour
         // Physics 원래대로
         EnablePhysics();
 
+        // [수정] 되감기 후 Box 잠금과 BoxStopper 충돌 상태 초기화
+        ResetBoxInteractionState();
+
 
         // 되감기 종료
         isRewinding = false;
@@ -677,6 +680,28 @@ public class ReturnManager : MonoBehaviour
 
             tracked.lastPosition =
                 tracked.GetPosition();
+        }
+    }
+
+
+    private void ResetBoxInteractionState()
+    {
+        foreach (TrackedObject tracked in trackedObjects)
+        {
+            if (tracked.target == null || !tracked.target.CompareTag(boxTag))
+                continue;
+
+            BoxMovement boxMovement = tracked.target.GetComponent<BoxMovement>();
+            if (boxMovement != null)
+            {
+                boxMovement.ResetAfterRewind();
+            }
+        }
+
+        Box[] stoppers = FindObjectsByType<Box>(FindObjectsSortMode.None);
+        foreach (Box stopper in stoppers)
+        {
+            stopper.ResetAfterRewind();
         }
     }
 
