@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 6600000000000000001}
   - component: {fileID: 6600000000000000002}
   - component: {fileID: 6600000000000000003}
+  - component: {fileID: 6600000000000000004}
+  - component: {fileID: 6600000000000000005}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -297,6 +299,11 @@ MonoBehaviour:
   preparationOffset: {x: 0, y: 0.1}
   preparationScale: 1.1
   preparationSortingOrderOffset: 10
+  preparationSound: {fileID: 8300000, guid: ca3a0da6ab394c6fba56405d5e95917a, type: 3}
+  preparationSoundVolume: 1
+  preparationSoundGain: 3
+  rewindSound: {fileID: 8300000, guid: 025b63ca0ffa4cc8ba66b2560a6a4f84, type: 3}
+  rewindSoundVolume: 0.25
   rewindShader: {fileID: 4800000, guid: 6d13db0df9cc4b4e8c07e6e421135f60, type: 3}
   playerNeonGreen: {r: 0.5176471, g: 1, b: 0, a: 1}
   playerNeonCyan: {r: 0, g: 1, b: 1, a: 1}
@@ -315,3 +322,60 @@ MonoBehaviour:
   neonMagenta: {r: 1, g: 0, b: 0.88235295, a: 0.38039216}
   afterimageSortingOrderOffset: -1
   poolSize: 18
+--- !u!114 &6600000000000000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095493072225404353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44c31d86d50a43db93c5a612b443cfd2, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerEmojiInteraction
+  defaultCursor: {fileID: 2800000, guid: a36f1d47c89847a3b73cb63e56c5d847, type: 3}
+  hoverCursor: {fileID: 2800000, guid: d42cb2207b9a4f558c11a2220510558a, type: 3}
+  defaultCursorHotspot: {x: 4, y: 4}
+  hoverCursorHotspot: {x: 4, y: 4}
+  cursorMode: 0
+  expressionSound: {fileID: 8300000, guid: fcdde281cdbf412690b2a7de143a7809, type: 3}
+  expressionSoundVolume: 1
+  interactionAreaSize: {x: 1, y: 1}
+  interactionAreaOffset: {x: 0, y: 0}
+  speechBubbleTexture: {fileID: 2800000, guid: 1a79294b43eb47a6a54d5956819116e6, type: 3}
+  emojiTexture: {fileID: 2800000, guid: 21b8dd8614494ff4970bd5d75e67fc54, type: 3}
+  bubbleCellSize: 64
+  emojiCellSize: 32
+  firstEmojiRowFromTop: 6
+  emojiRowCount: 2
+  bubbleOffset: {x: 0, y: 1.1}
+  bubbleScale: 2.4
+  emojiOffset: {x: 0, y: 0.06}
+  emojiScale: 1.6
+  reactionDuration: 0.9
+  bubbleExpandDuration: 0.16
+  bubbleShrinkDuration: 0.2
+  twitchDuration: 0.28
+  twitchDistance: 0.065
+  twitchCycles: 2.5
+  bubbleSortingOrderOffset: 1000
+  emojiSortingOrderOffset: 1001
+--- !u!114 &6600000000000000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095493072225404353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97e58a0264e94325b5d8349839ff4f51, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerIdleBounce
+  idleDelay: 0.15
+  legHeightRatio: 0.42
+  seamOverlapPixels: 4
+  bounceDistance: 0.028
+  bounceBeatsPerSecond: 2
+  downwardOffset: -0.006

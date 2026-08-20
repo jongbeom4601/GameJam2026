@@ -826,6 +826,10 @@ MonoBehaviour:
   boxTag: Box
   rewindStartDelay: 5
   rewindSpeed: 30
+  maximumRewindSpeed: 300
+  rewindAcceleration: 5.5
+  fallbackRewindDuration: 1.2
+  timerRestartDelay: 0.3
   recordThreshold: 0.001
   remainingTime: 0
 --- !u!4 &297440514
@@ -5165,6 +5169,8 @@ MonoBehaviour:
   TargetObject: {fileID: 1705051018}
   offSprite: {fileID: 5258334343253962616, guid: 8c484882ce6a0644ca78c72af829e5ff, type: 3}
   onSprite: {fileID: -2034304328462991002, guid: 32a58484ef9083046b43d4731cb6ec39, type: 3}
+  interactionSound: {fileID: 8300000, guid: 9eca82a886ab4c4f9412c6610552aa71, type: 3}
+  interactionSoundVolume: 1
 --- !u!1 &1705051018 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6203935668850238542, guid: aa2673a5b685e7c46964b8cb6a568a25, type: 3}

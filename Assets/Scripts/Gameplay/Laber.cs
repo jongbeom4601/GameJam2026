@@ -9,16 +9,23 @@ public class Laber : MonoBehaviour
     [Header("Laber 이미지")]
     [SerializeField] private Sprite offSprite;
     [SerializeField] private Sprite onSprite;
+    [Header("Interaction Sound")]
+    [SerializeField] private AudioClip interactionSound;
+    [SerializeField, Range(0f, 1f)] private float interactionSoundVolume = 1f;
     private SpriteRenderer sprite;
     private SpriteRenderer[] targetSprites;
     private SpriteRenderer interactionOutline;
     private Collider2D TargetCollider;
+    private AudioSource interactionAudioSource;
+    private bool previousInteractionState;
 
 
     private void Awake()
     {
         InterScript = GetComponent<InteractObject>();
         sprite = GetComponent<SpriteRenderer>();
+        previousInteractionState = InterScript.exInteract;
+        CreateAudioSource();
         CreateInteractionOutline();
         if (TargetObject != null)
         {
@@ -74,7 +81,39 @@ public class Laber : MonoBehaviour
 
     private void Update()
     {
+        PlaySoundWhenInteractionChanges();
         LaberSetting();
+    }
+
+    private void CreateAudioSource()
+    {
+        if (interactionSound == null)
+        {
+            return;
+        }
+
+        interactionAudioSource = gameObject.AddComponent<AudioSource>();
+        interactionAudioSource.playOnAwake = false;
+        interactionAudioSource.loop = false;
+        interactionAudioSource.spatialBlend = 0f;
+        SfxMuteToggle.RegisterSoundEffect(interactionAudioSource);
+    }
+
+    private void PlaySoundWhenInteractionChanges()
+    {
+        bool currentInteractionState = InterScript.exInteract;
+        if (currentInteractionState == previousInteractionState)
+        {
+            return;
+        }
+
+        previousInteractionState = currentInteractionState;
+        if (interactionAudioSource != null && interactionSound != null)
+        {
+            interactionAudioSource.PlayOneShot(
+                interactionSound,
+                interactionSoundVolume);
+        }
     }
 
     private void LaberSetting()
@@ -138,5 +177,10 @@ public class Laber : MonoBehaviour
             color.a = alpha;
             targetRenderer.color = color;
         }
+    }
+
+    private void OnValidate()
+    {
+        interactionSoundVolume = Mathf.Clamp01(interactionSoundVolume);
     }
 }

@@ -68,6 +68,13 @@ public sealed class PlayerDirectionalAnimator : MonoBehaviour
         }
     }
 
+    public void StopAndShowStanding()
+    {
+        movementInput = Vector2.zero;
+        animationTime = 0f;
+        ShowStandingSprite();
+    }
+
     private FacingDirection GetFacingDirection(Vector2 direction)
     {
         if (Mathf.Abs(direction.x) >= Mathf.Abs(direction.y))

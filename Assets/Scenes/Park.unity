@@ -610,6 +610,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Laber
   TargetObject: {fileID: 1515325194}
+  interactionSound: {fileID: 8300000, guid: 9eca82a886ab4c4f9412c6610552aa71, type: 3}
+  interactionSoundVolume: 1
 --- !u!114 &1155498424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -928,6 +930,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NextStage
   sceneName: 
+  celebrationDuration: 2
+  jumpDuration: 0.45
+  jumpHeight: 0.22
+  crownTexture: {fileID: 2800000, guid: 1ea2dd296e124ae0ad526d8bae3873ec, type: 3}
+  crownColumns: 8
+  crownFrameCount: 37
+  crownFrameDuration: 0.04
+  crownOffset: {x: 0, y: 0.95}
+  crownScale: 1.25
+  crownSortingOrderOffset: 1000
+  successSound: {fileID: 8300000, guid: 02624666bfc44238a01ae2e89fb94e48, type: 3}
+  successSoundVolume: 1
 --- !u!212 &1336064132
 SpriteRenderer:
   serializedVersion: 3
@@ -1474,6 +1488,8 @@ GameObject:
   - component: {fileID: 2030186656}
   - component: {fileID: 2030186655}
   - component: {fileID: 2030186654}
+  - component: {fileID: 2030186658}
+  - component: {fileID: 2030186659}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1679,6 +1695,63 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &2030186658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030186651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44c31d86d50a43db93c5a612b443cfd2, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerEmojiInteraction
+  defaultCursor: {fileID: 2800000, guid: a36f1d47c89847a3b73cb63e56c5d847, type: 3}
+  hoverCursor: {fileID: 2800000, guid: d42cb2207b9a4f558c11a2220510558a, type: 3}
+  defaultCursorHotspot: {x: 4, y: 4}
+  hoverCursorHotspot: {x: 4, y: 4}
+  cursorMode: 0
+  expressionSound: {fileID: 8300000, guid: fcdde281cdbf412690b2a7de143a7809, type: 3}
+  expressionSoundVolume: 1
+  interactionAreaSize: {x: 1, y: 1}
+  interactionAreaOffset: {x: 0, y: 0}
+  speechBubbleTexture: {fileID: 2800000, guid: 1a79294b43eb47a6a54d5956819116e6, type: 3}
+  emojiTexture: {fileID: 2800000, guid: 21b8dd8614494ff4970bd5d75e67fc54, type: 3}
+  bubbleCellSize: 64
+  emojiCellSize: 32
+  firstEmojiRowFromTop: 6
+  emojiRowCount: 2
+  bubbleOffset: {x: 0, y: 1.1}
+  bubbleScale: 2.4
+  emojiOffset: {x: 0, y: 0.06}
+  emojiScale: 1.6
+  reactionDuration: 0.9
+  bubbleExpandDuration: 0.16
+  bubbleShrinkDuration: 0.2
+  twitchDuration: 0.28
+  twitchDistance: 0.065
+  twitchCycles: 2.5
+  bubbleSortingOrderOffset: 1000
+  emojiSortingOrderOffset: 1001
+--- !u!114 &2030186659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030186651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97e58a0264e94325b5d8349839ff4f51, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerIdleBounce
+  idleDelay: 0.15
+  legHeightRatio: 0.42
+  seamOverlapPixels: 4
+  bounceDistance: 0.028
+  bounceBeatsPerSecond: 2
+  downwardOffset: -0.006
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

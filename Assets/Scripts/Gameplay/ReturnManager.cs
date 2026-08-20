@@ -14,8 +14,16 @@ public class ReturnManager : MonoBehaviour
     // 되감기 시작까지 걸리는 시간
     [SerializeField] private float rewindStartDelay = 10f;
 
-    // 되감기 이동 속도
+    // 되감기 시작 속도와 점근적으로 도달할 최고 속도
     [SerializeField] private float rewindSpeed = 5f;
+    [SerializeField] private float maximumRewindSpeed = 300f;
+    [SerializeField] private float rewindAcceleration = 5.5f;
+
+    // 효과음이 연결되지 않은 경우에만 사용하는 기본 역행 시간
+    [SerializeField, Min(0.01f)] private float fallbackRewindDuration = 1.2f;
+
+    // 되감기가 끝난 뒤 다음 루프 타이머가 시작되기 전 대기 시간
+    [SerializeField, Min(0f)] private float timerRestartDelay = 0.3f;
 
     // 이 값보다 작게 움직이면 기록하지 않음
     [SerializeField] private float recordThreshold = 0.001f;
@@ -35,6 +43,7 @@ public class ReturnManager : MonoBehaviour
     // =====================================================
 
     private float elapsedTime;
+    private float timerRestartDelayRemaining;
 
     private bool isRewinding = false;
     private float rewindProgress;
@@ -111,6 +120,27 @@ public class ReturnManager : MonoBehaviour
     }
 
 
+    private struct RewindSegment
+    {
+        public MovementRecord record;
+        public Vector3 startPosition;
+        public float distance;
+
+
+        public RewindSegment(
+            MovementRecord record,
+            Vector3 startPosition)
+        {
+            this.record = record;
+            this.startPosition = startPosition;
+            distance = Vector3.Distance(
+                startPosition,
+                record.previousPosition
+            );
+        }
+    }
+
+
     // =====================================================
     // 하나의 Stack
     // =====================================================
@@ -142,7 +172,7 @@ public class ReturnManager : MonoBehaviour
     {
         FindObjects();
 
-        ResetTimer();
+        ResetTimer(false);
 
         canRecord = true;
     }
@@ -153,6 +183,15 @@ public class ReturnManager : MonoBehaviour
         // 되감기 중에는 타이머 정지
         if (isRewinding)
             return;
+
+        if (timerRestartDelayRemaining > 0f)
+        {
+            timerRestartDelayRemaining = Mathf.Max(
+                0f,
+                timerRestartDelayRemaining - Time.deltaTime);
+            remainingTime = rewindStartDelay;
+            return;
+        }
 
 
         elapsedTime += Time.deltaTime;
@@ -294,32 +333,57 @@ public class ReturnManager : MonoBehaviour
         DisablePhysics();
 
 
-        // ---------------------------------------------
-        // Stack을 최신 기록부터 하나씩 꺼낸다.
-        // ---------------------------------------------
-
-        int totalRecordCount = movementHistory.Count;
-
-        while (movementHistory.Count > 0)
+        List<RewindSegment> rewindSegments = BuildRewindSegments();
+        float totalDistance = 0f;
+        foreach (RewindSegment segment in rewindSegments)
         {
-            MovementRecord record =
-                movementHistory.Pop();
+            totalDistance += segment.distance;
+        }
 
+        float rewindDuration = ResolveRewindDuration();
+        float elapsedRewindTime = 0f;
+        float completedDistance = 0f;
+        int segmentIndex = 0;
 
-            if (record.target == null)
-                continue;
+        // The player's rewind sound begins in LateUpdate on this frame.
+        yield return null;
 
+        while (elapsedRewindTime < rewindDuration)
+        {
+            elapsedRewindTime = Mathf.Min(
+                rewindDuration,
+                elapsedRewindTime + Time.unscaledDeltaTime);
 
-            yield return StartCoroutine(
-                MoveBack(
-                    record,
-                    record.previousPosition
-                )
-            );
+            float distanceProgress = EvaluateRewindDistanceProgress(
+                elapsedRewindTime,
+                rewindDuration);
+            float targetDistance = totalDistance * distanceProgress;
 
-            rewindProgress = totalRecordCount > 0
-                ? 1f - (float)movementHistory.Count / totalRecordCount
-                : 1f;
+            ApplyRewindDistance(
+                rewindSegments,
+                targetDistance,
+                ref segmentIndex,
+                ref completedDistance);
+
+            rewindProgress = distanceProgress;
+
+            if (elapsedRewindTime < rewindDuration)
+            {
+                yield return null;
+            }
+        }
+
+        while (segmentIndex < rewindSegments.Count)
+        {
+            RewindSegment segment = rewindSegments[segmentIndex];
+            if (segment.record.target != null)
+            {
+                SetExactPosition(
+                    segment.record,
+                    segment.record.previousPosition
+                );
+            }
+            segmentIndex++;
         }
 
 
@@ -346,7 +410,7 @@ public class ReturnManager : MonoBehaviour
 
 
         // 다음 주기 타이머 초기화
-        ResetTimer();
+        ResetTimer(true);
 
 
         // ---------------------------------------------
@@ -358,75 +422,136 @@ public class ReturnManager : MonoBehaviour
     }
 
 
-    // =====================================================
-    // 하나의 이동 기록 되돌리기
-    // =====================================================
-
-    private IEnumerator MoveBack(
-        MovementRecord record,
-        Vector3 destination)
+    private List<RewindSegment> BuildRewindSegments()
     {
-        if (record.target == null)
-            yield break;
+        List<RewindSegment> segments =
+            new List<RewindSegment>(movementHistory.Count);
+        Dictionary<Transform, Vector3> simulatedPositions =
+            new Dictionary<Transform, Vector3>();
+
+        while (movementHistory.Count > 0)
+        {
+            MovementRecord record = movementHistory.Pop();
+            if (record.target == null)
+                continue;
+
+            if (!simulatedPositions.TryGetValue(
+                record.target,
+                out Vector3 startPosition))
+            {
+                startPosition = GetCurrentPosition(record);
+            }
+
+            segments.Add(new RewindSegment(record, startPosition));
+            simulatedPositions[record.target] = record.previousPosition;
+        }
+
+        return segments;
+    }
 
 
-        float speed = Mathf.Max(
-            0.001f,
-            rewindSpeed
+    private void ApplyRewindDistance(
+        List<RewindSegment> segments,
+        float targetDistance,
+        ref int segmentIndex,
+        ref float completedDistance)
+    {
+        while (segmentIndex < segments.Count)
+        {
+            RewindSegment segment = segments[segmentIndex];
+
+            if (segment.record.target == null)
+            {
+                completedDistance += segment.distance;
+                segmentIndex++;
+                continue;
+            }
+
+            if (segment.distance <= 0.0001f)
+            {
+                SetExactPosition(
+                    segment.record,
+                    segment.record.previousPosition
+                );
+                segmentIndex++;
+                continue;
+            }
+
+            if (targetDistance < completedDistance + segment.distance)
+            {
+                float segmentProgress = Mathf.InverseLerp(
+                    completedDistance,
+                    completedDistance + segment.distance,
+                    targetDistance);
+                SetExactPosition(
+                    segment.record,
+                    Vector3.Lerp(
+                        segment.startPosition,
+                        segment.record.previousPosition,
+                        segmentProgress
+                    )
+                );
+                return;
+            }
+
+            SetExactPosition(
+                segment.record,
+                segment.record.previousPosition
+            );
+            completedDistance += segment.distance;
+            segmentIndex++;
+        }
+    }
+
+
+    private float ResolveRewindDuration()
+    {
+        PlayerRewindVfx rewindVfx =
+            FindAnyObjectByType<PlayerRewindVfx>();
+
+        return Mathf.Max(
+            0.01f,
+            rewindVfx != null
+                ? rewindVfx.RewindSoundDurationSeconds
+                : fallbackRewindDuration
         );
+    }
 
 
-        while (record.target != null)
-        {
-            Vector3 currentPosition =
-                GetCurrentPosition(record);
+    private float EvaluateRewindDistanceProgress(
+        float elapsed,
+        float duration)
+    {
+        float startSpeed = Mathf.Max(0.01f, rewindSpeed);
+        float targetSpeed = Mathf.Max(startSpeed, maximumRewindSpeed);
+        float acceleration = Mathf.Max(0.01f, rewindAcceleration);
+
+        float elapsedDistance = IntegratedRewindSpeed(
+            Mathf.Clamp(elapsed, 0f, duration),
+            startSpeed,
+            targetSpeed,
+            acceleration);
+        float totalDistance = IntegratedRewindSpeed(
+            duration,
+            startSpeed,
+            targetSpeed,
+            acceleration);
+
+        return totalDistance > 0.0001f
+            ? Mathf.Clamp01(elapsedDistance / totalDistance)
+            : Mathf.Clamp01(elapsed / duration);
+    }
 
 
-            // 목적지까지의 거리
-            float distance =
-                Vector3.Distance(
-                    currentPosition,
-                    destination
-                );
-
-
-            // 충분히 가까우면 종료
-            if (distance <= 0.0001f)
-                break;
-
-
-            Vector3 nextPosition =
-                Vector3.MoveTowards(
-                    currentPosition,
-                    destination,
-                    speed * Time.deltaTime
-                );
-
-
-            SetExactPosition(
-                record,
-                nextPosition
-            );
-
-
-            yield return null;
-        }
-
-
-        // -------------------------------------------------
-        // ★ 중요
-        //
-        // 마지막에는 MoveTowards 결과에 의존하지 않고
-        // 저장되어 있던 좌표를 정확하게 대입한다.
-        // -------------------------------------------------
-
-        if (record.target != null)
-        {
-            SetExactPosition(
-                record,
-                destination
-            );
-        }
+    private static float IntegratedRewindSpeed(
+        float time,
+        float startSpeed,
+        float targetSpeed,
+        float acceleration)
+    {
+        return targetSpeed * time -
+            (targetSpeed - startSpeed) *
+            (1f - Mathf.Exp(-acceleration * time)) / acceleration;
     }
 
 
@@ -721,9 +846,13 @@ public class ReturnManager : MonoBehaviour
     // Timer
     // =====================================================
 
-    private void ResetTimer()
+    private void ResetTimer(bool applyRestartDelay)
     {
         elapsedTime = 0f;
+
+        timerRestartDelayRemaining = applyRestartDelay
+            ? Mathf.Max(0f, timerRestartDelay)
+            : 0f;
 
         remainingTime =
             rewindStartDelay;
