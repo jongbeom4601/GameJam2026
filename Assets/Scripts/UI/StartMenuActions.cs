@@ -9,6 +9,9 @@ public sealed class StartMenuActions : MonoBehaviour
     [Tooltip("Scene loaded when the Start button is pressed.")]
     [SerializeField] private string gameSceneName = "SampleScene";
 
+    [Tooltip("Options overlay shown on top of the start menu.")]
+    [SerializeField] private GameObject optionPanel;
+
     private bool isLoading;
 
     public void StartGame()
@@ -38,5 +41,21 @@ public sealed class StartMenuActions : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    public void OpenOptions()
+    {
+        if (optionPanel != null)
+        {
+            optionPanel.SetActive(true);
+        }
+    }
+
+    public void CloseOptions()
+    {
+        if (optionPanel != null)
+        {
+            optionPanel.SetActive(false);
+        }
     }
 }
