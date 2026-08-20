@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        /* [수정] 각 씬의 ReturnManager만 사용하도록 기존 되감기 비활성화 시작
         if (!isReturning)
         {
             RecordPath();
@@ -58,6 +59,7 @@ public class PlayerController : MonoBehaviour
                 returnEX = false;
             }
         }
+        [수정] 각 씬의 ReturnManager만 사용하도록 기존 되감기 비활성화 끝 */
     }
 
     private void FixedUpdate()

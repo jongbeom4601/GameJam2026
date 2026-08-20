@@ -587,7 +587,8 @@ public class ReturnManager : MonoBehaviour
                 // 원래 상태 기억
                 colliderStates.Add(
                     col,
-                    col.enabled
+                    // [수정] BoxStop이 끈 Box Collider는 되감기 후 다시 상호작용할 수 있게 복원
+                    tracked.target.CompareTag(boxTag) || col.enabled
                 );
 
 
