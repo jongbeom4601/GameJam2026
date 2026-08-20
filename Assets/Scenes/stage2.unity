@@ -682,8 +682,46 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 780153557343687986, guid: bda91b2d5b3d211409ac337b235fb794, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 135078263}
   m_SourcePrefab: {fileID: 100100000, guid: bda91b2d5b3d211409ac337b235fb794, type: 3}
+--- !u!1 &135078262 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 780153557343687986, guid: bda91b2d5b3d211409ac337b235fb794, type: 3}
+  m_PrefabInstance: {fileID: 135078261}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &135078263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 135078262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd6d28ed1f2947e696bcbf5f50565e8e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::StageTwoBoxTutorial
+  blackHoleTarget: {fileID: 459695460}
+  completionDistance: 0.15
+  keyboardTexture: {fileID: 2800000, guid: 83f9a56a879b4d0fa40111fad06af678, type: 3}
+  keyCellSize: 32
+  eKeyColumnFromLeft: 15
+  releasedRowFromTop: 1
+  pressedRowFromTop: 8
+  keyFrameInterval: 0.42
+  keyPromptOffset: {x: 1.05, y: 0.2}
+  keyPromptScale: 0.9
+  pressedKeyDrop: 0.08
+  keySortingOrderOffset: 1000
+  highlightColor: {r: 1, g: 0.84, b: 0, a: 1}
+  minimumAlpha: 0.12
+  maximumAlpha: 0.95
+  pulseCyclesPerSecond: 1.35
+  boxHighlightScale: 1.38
+  holeHighlightScale: 1.32
 --- !u!1 &209409551
 GameObject:
   m_ObjectHideFlags: 0
@@ -1498,6 +1536,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66418c7baab510a44b787df56cb9fd51, type: 3}
+--- !u!1 &459695460 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5600014657040231782, guid: 66418c7baab510a44b787df56cb9fd51, type: 3}
+  m_PrefabInstance: {fileID: 459695459}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &537274462
 GameObject:
   m_ObjectHideFlags: 0

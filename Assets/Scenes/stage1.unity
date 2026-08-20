@@ -283,6 +283,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3068960749615207365, guid: 3859e01c1c127f24992d10ac75a11eef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1615302144}
+    - targetCorrespondingSourceObject: {fileID: 3068960749615207365, guid: 3859e01c1c127f24992d10ac75a11eef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1615302145}
   m_SourcePrefab: {fileID: 100100000, guid: 3859e01c1c127f24992d10ac75a11eef, type: 3}
 --- !u!1 &70162128
 GameObject:
@@ -5171,6 +5174,35 @@ MonoBehaviour:
   onSprite: {fileID: -2034304328462991002, guid: 32a58484ef9083046b43d4731cb6ec39, type: 3}
   interactionSound: {fileID: 8300000, guid: 9eca82a886ab4c4f9412c6610552aa71, type: 3}
   interactionSoundVolume: 1
+--- !u!114 &1615302145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1615302137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8292008274f433b92035742dfea0065, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::StageOneLeverTutorial
+  ladderTarget: {fileID: 1705051018}
+  keyboardTexture: {fileID: 2800000, guid: 83f9a56a879b4d0fa40111fad06af678, type: 3}
+  keyCellSize: 32
+  eKeyColumnFromLeft: 15
+  releasedRowFromTop: 1
+  pressedRowFromTop: 8
+  keyFrameInterval: 0.42
+  keyPromptOffset: {x: 0, y: 1.15}
+  keyPromptScale: 0.9
+  pressedKeyDrop: 0.08
+  keySortingOrderOffset: 1000
+  highlightColor: {r: 1, g: 0.84, b: 0, a: 1}
+  minimumAlpha: 0.12
+  maximumAlpha: 0.95
+  pulseCyclesPerSecond: 1.35
+  leverHighlightScale: 1.38
+  ladderHighlightScale: 1.2
 --- !u!1 &1705051018 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6203935668850238542, guid: aa2673a5b685e7c46964b8cb6a568a25, type: 3}
