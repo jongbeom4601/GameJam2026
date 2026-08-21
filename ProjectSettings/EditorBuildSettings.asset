@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/StartScene.unity
     guid: 1de16763371d4b9b96cfd8d4e919cde2
   - enabled: 1
+    path: Assets/Scenes/prolog.unity
+    guid: 2c20350ccedb48748a9163f02545423b
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
